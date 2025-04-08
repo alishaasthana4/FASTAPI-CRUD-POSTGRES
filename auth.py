@@ -11,6 +11,7 @@ ALGORITHM='HS256'
 access_token_expire_time=30 
 def create_access_token(data:dict):
     to_encode=data.copy
-def 
+def hash_password():
+    pass
     
 
