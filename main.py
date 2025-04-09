@@ -3,6 +3,8 @@ from models import DBUser
 from database import engine,Base,Session
 from schemas import Userr
 from database import sessionlocal
+from auth import hash_password,verify_password,create_access_token
+from fastapi.security import OAuth2PasswordRequestForm
 def get_db():
     db=sessionlocal()
     try:
@@ -11,9 +13,20 @@ def get_db():
         db.close()
 app=FastAPI()
 Base.metadata.create_all(engine)
+@app.post("/login")
+def login(form_data:OAuth2PasswordRequestForm=Depends,db:Session=Depends(get_db)):
+    user=db.query.DBUser.filter(DBUser.email==form_data.username).first()
+    if not user or not verify_password:
+        return(HTTPException)
+    access_token=create_access_token(data={"sub":user.email})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 @app.post("/users")
 def create_users(user:Userr,db:Session=Depends(get_db)):
-    db_user=DBUser(id=user.id,name=user.name,email=user.email)
+    hash_pw=hash_password(user.password)
+    db_user=DBUser(id=user.id,name=user.name,email=user.email,password=hash_pw)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
