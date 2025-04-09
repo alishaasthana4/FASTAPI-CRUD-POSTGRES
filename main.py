@@ -14,15 +14,12 @@ def get_db():
 app=FastAPI()
 Base.metadata.create_all(engine)
 @app.post("/login")
-def login(form_data:OAuth2PasswordRequestForm=Depends,db:Session=Depends(get_db)):
-    user=db.query.DBUser.filter(DBUser.email==form_data.username).first()
-    if not user or not verify_password:
-        return(HTTPException)
-    access_token=create_access_token(data={"sub":user.email})
-    return {
-        "access_token": access_token,
-        "token_type": "bearer"
-    }
+def login(form_data:OAuth2PasswordRequestForm=Depends(),db: Session = Depends(get_db)):
+    user = db.query(DBUser).filter(DBUser.email == form_data.username).first()
+    if not user or not verify_password(user.password,form_data.password):
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+    token = create_access_token(data={"sub": user.email})
+    return {"access_token": token, "token_type": "bearer"}                              
 @app.post("/users")
 def create_users(user:Userr,db:Session=Depends(get_db)):
     hash_pw=hash_password(user.password)

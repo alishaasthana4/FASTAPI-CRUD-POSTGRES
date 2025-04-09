@@ -6,7 +6,7 @@ def hash_password(password:str):
     return pwd_context.hash(password)
 def verify_password(hashed_password,plain_password):
     return pwd_context.verify(hashed_password,plain_password)
-Secret_key='ali29330eie0'
+Secret_key='ali123'
 ALGORITHM='HS256'
 access_token_time=30
 def create_access_token(data:dict):
