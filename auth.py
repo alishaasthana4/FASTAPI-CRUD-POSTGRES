@@ -1,7 +1,10 @@
 from passlib.context import CryptContext
 import jwt
 from datetime import datetime,timedelta,timezone
-pwd_context=CryptContext(schemes='bcrypt',deprecated='auto')
+import secrets
+def generate_api_key():
+    return secrets.token_hex(32) 
+pwd_context=CryptContext(schemes=['bcrypt'],deprecated='auto')
 def hash_password(password:str):
     return pwd_context.hash(password)
 def verify_password(hashed_password,plain_password):
@@ -16,6 +19,8 @@ def create_access_token(data:dict):
     encoded_jwt=jwt.encode(to_encode,Secret_key,algorithm=ALGORITHM)
     return encoded_jwt
     
+
+
 
 
     

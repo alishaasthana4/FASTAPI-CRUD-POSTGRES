@@ -4,7 +4,14 @@ class Userr(BaseModel):
     email: str
     id: int
     password:str
-
+class LoginInput(BaseModel):
+    email:str
+    password:str
+class ChangePassword(BaseModel):
+    old_password:str
+    new_password:str
+    email:str
+    
     
 
 
